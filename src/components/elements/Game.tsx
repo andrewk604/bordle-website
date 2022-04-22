@@ -16,47 +16,64 @@ let Game = (props: any) => {
   }, [])
 
   let currentRow = 0
-  let currentSquare = 0
+  let currentSquare = -1
+
+  const loading = false
+
+  const newSymbol = (key: string) => {
+    if (currentSquare < 4) {
+      let newGridItems = [...gridItemsProto]
+      newGridItems[currentRow][currentSquare + 1].value = key
+      setGridItems(newGridItems)
+      if (currentSquare < 4) {
+        currentSquare += 1
+      }
+    }
+  }
+
+  const deleteSymbol = (key: string) => {
+    if (currentSquare == -1) return
+    let newGridItems = [...gridItemsProto]
+    newGridItems[currentRow][currentSquare].value = ""
+    setGridItems(newGridItems)
+    if (currentSquare > -1) {
+      currentSquare -= 1
+    }
+  }
+
+  const Enter = (key: string) => {
+    if (currentSquare == 4 && currentRow < 5) {
+      currentRow += 1
+      currentSquare = -1
+    }
+
+    if (currentSquare == 4 && currentRow == 5) {
+      currentSquare = -1
+      currentRow = 0
+      let newGridItems = [...gridItemsProto]
+      newGridItems.forEach((item) => {
+        item.forEach((subItem) => {
+          subItem.value = ""
+        })
+      })
+      setGridItems(newGridItems)
+    }
+  }
 
   const keyboardType = (e: any) => {
-    if (e.key >= "a" && e.key <= "z") {
-      if (currentSquare <= 4) {
-        let newGridItems = [...gridItemsProto]
-        newGridItems[currentRow][currentSquare].value = e.key
-        setGridItems(newGridItems)
-        if (currentSquare < 4) {
-          currentSquare += 1
-        }
-      }
+    console.log(currentSquare)
+    if (e.key >= "a" && e.key <= "z" && loading === false) {
+      newSymbol(e.key)
     }
 
-    if (e.key === "Backspace") {
-      let newGridItems = [...gridItemsProto]
-      newGridItems[currentRow][currentSquare].value = ""
-      setGridItems(newGridItems)
-      if (currentSquare !== 0) {
-        currentSquare -= 1
-      }
+    if (e.key === "Backspace" && loading === false) {
+      deleteSymbol(e.key)
     }
 
-    if (e.key === "Enter") {
-      if (currentSquare == 4 && currentRow < 5) {
-        currentRow += 1
-        currentSquare = 0
-      }
-
-      if (currentSquare == 4 && currentRow == 5) {
-        currentSquare = 0
-        currentRow = 0
-        let newGridItems = [...gridItemsProto]
-        newGridItems.forEach((item) => {
-          item.forEach((subItem) => {
-            subItem.value = ""
-          })
-        })
-        setGridItems(newGridItems)
-      }
+    if (e.key === "Enter" && loading === false) {
+      Enter(e.key)
     }
+    console.log(currentSquare)
   }
 
   const gridItemsProto = [
