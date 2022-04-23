@@ -1,2 +1,2 @@
 # bordle-website
-Created with CodeSandbox
+- My copy of Wordle by NY Times
