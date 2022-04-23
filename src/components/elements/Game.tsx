@@ -14,6 +14,8 @@ import UserApi from "../../api/user-api"
 
 let Game = (props: any) => {
   let lastGridItems = null
+  let loading = false
+  let finished = false
 
   useEffect(() => {
     window.addEventListener(`keydown`, keyboardType)
@@ -28,8 +30,6 @@ let Game = (props: any) => {
 
   let currentRow = 0
   let currentSquare = -1
-
-  const loading = false
 
   const newSymbol = (key: string) => {
     if (currentSquare < 4) {
@@ -52,17 +52,57 @@ let Game = (props: any) => {
     }
   }
 
+  const congratulations = () => {
+    AlertsService.showSuccess(
+      `You guessed the word right! Come back tomorrow for the new word!`
+    )
+    finished = true
+  }
+
   const Enter = async (key: string) => {
     if (currentSquare == 4 && currentRow < 5) {
       const result = await UserApi.checkWord(word)
-      console.log(result)
+
       if (result == undefined) {
         AlertsService.showError(`Not in the word list`)
-
         return
       }
       const newGridItems = [...gridItemsProto]
       const newKeyboard = [...keyboardProto]
+
+      result.correctSymbols.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 2
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          // if (subItem.indexOf(correctSymbol) !== -1) {
+          //   newKeyboard[subIndex][subItem.indexOf(correctSymbol)].state = 2
+          // }
+        })
+      })
+      result.correctPlaces.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 1
+      })
+      result.notCorrect.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 3
+      })
+
+      setGridItems(newGridItems)
+      setKeyboard(newKeyboard)
+
+      if (result.correct === true) {
+        congratulations()
+        return
+      } else if (result.correct === false) {
+        currentRow += 1
+        currentSquare = -1
+      }
+    }
+
+    if (currentSquare == 4 && currentRow == 5) {
+      const result = await UserApi.checkWord(word)
+      console.log(result)
+      let newGridItems = [...gridItemsProto]
+      let newKeyboard = [...keyboardProto]
 
       result.correctSymbols.forEach((i, id) => {
         newGridItems[currentRow][i].state = 2
@@ -73,36 +113,29 @@ let Game = (props: any) => {
       result.notCorrect.forEach((i, id) => {
         newGridItems[currentRow][i].state = 3
       })
-
+      if ((result.correct = true)) {
+        congratulations()
+      }
       setGridItems(newGridItems)
-
-      currentRow += 1
-      currentSquare = -1
-    }
-
-    if (currentSquare == 4 && currentRow == 5) {
-      currentSquare = -1
-      currentRow = 0
-      let newGridItems = [...gridItemsProto]
-      newGridItems.forEach((item) => {
-        item.forEach((subItem) => {
-          subItem.value = ""
-        })
-      })
-      setGridItems(newGridItems)
+      setKeyboard(newKeyboard)
     }
   }
 
   const keyboardType = (e: any) => {
-    if (e.key >= "a" && e.key <= "z" && loading === false) {
+    if (
+      e.key >= "a" &&
+      e.key <= "z" &&
+      loading === false &&
+      finished === false
+    ) {
       newSymbol(e.key)
     }
 
-    if (e.key === "Backspace" && loading === false) {
+    if (e.key === "Backspace" && loading === false && finished === false) {
       deleteSymbol(e.key)
     }
 
-    if (e.key === "Enter" && loading === false) {
+    if (e.key === "Enter" && loading === false && finished === false) {
       Enter(e.key)
     }
     word = ""
