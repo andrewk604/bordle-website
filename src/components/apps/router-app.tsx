@@ -1,20 +1,17 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Alerts from "../templates/alerts";
+import React, { useEffect, useState } from "react"
+import { BrowserRouter, Switch, Route } from "react-router-dom"
+import Alerts from "../templates/alerts"
 
-import { getStorage, putStorage } from "../../hooks/useStorage";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import { getStorage, putStorage } from "../../hooks/useStorage"
 
-import styled from "styled-components";
-import { Frame } from "../templates/styled-templates";
+import styled from "styled-components"
+import { Frame } from "../templates/styled-templates"
 
-import UserApp from "./user-app";
+import UserApp from "./user-app"
 
 let RouterApp = () => {
-  const [userRole, setUserRole] = useLocalStorage(`role`, `GUEST`);
-
-  const route = UserApp;
+  const route = UserApp
 
   return (
     <BrowserRouter>
@@ -27,8 +24,8 @@ let RouterApp = () => {
         </Switch>
       </Wrapper>
     </BrowserRouter>
-  );
-};
+  )
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -38,8 +35,8 @@ const Wrapper = styled.div`
   background: #121213;
   padding: 0;
   margin: 0;
-`;
+`
 
-export default RouterApp;
+export default RouterApp
 
 /* eslint-enable */
