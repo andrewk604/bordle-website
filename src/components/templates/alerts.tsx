@@ -1,70 +1,70 @@
 /*eslint-disable*/
-import React, { useState, useEffect, useRef } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect, useRef } from "react"
+import styled from "styled-components"
 
-import { Frame } from "./styled-templates";
+import { Frame } from "./styled-templates"
 
-import { EAlertTypes } from "../../services/alert-service";
+import { EAlertTypes } from "../../services/alert-service"
 
-import useEventListener, { eventDispatch } from "../../hooks/useEventListener";
+import useEventListener, { eventDispatch } from "../../hooks/useEventListener"
 
 type TNotification = {
-  id: string;
-  message: string;
-  visible: boolean;
-  status: string;
-};
+  id: string
+  message: string
+  visible: boolean
+  status: string
+}
 
 type TNotificationRef = {
-  current: TNotification[];
-};
+  current: TNotification[]
+}
 
-const createId = () => Math.random().toString(36).substring(3);
+const createId = () => Math.random().toString(36).substring(3)
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const Alerts = () => {
-  const notificationsRef: TNotificationRef = useRef([]);
+  const notificationsRef: TNotificationRef = useRef([])
   const [notifications, setNotifications] = useState<Array<TNotification>>(
     notificationsRef.current
-  );
+  )
 
   useEffect(() => {
-    notificationsRef.current = notifications;
-  }, [notifications]);
+    notificationsRef.current = notifications
+  }, [notifications])
 
   const addItem = (message: any, type: EAlertTypes) => {
-    const id = createId();
+    const id = createId()
     setNotifications([
       ...notifications,
       { id, message, visible: false, status: type }
-    ]);
-    return id;
-  };
+    ])
+    return id
+  }
 
   const openItem = (item_id: string) => {
     setNotifications(
       notificationsRef.current.map((i) =>
         i.id === item_id ? { ...i, visible: true } : i
       )
-    );
-  };
+    )
+  }
 
   const closeItem = (itemId: string) => {
     setNotifications(
       notificationsRef.current.map((i) =>
         i.id === itemId ? { ...i, visible: false } : i
       )
-    );
-  };
+    )
+  }
 
   useEventListener(`SHOW_ALERT`, async (d: any) => {
-    const id = addItem(d.detail?.message, d?.detail?.type);
-    await sleep(0);
-    openItem(id);
-    await sleep(5000);
-    closeItem(id);
-  });
+    const id = addItem(d.detail?.message, d?.detail?.type)
+    await sleep(0)
+    openItem(id)
+    await sleep(5000)
+    closeItem(id)
+  })
 
   return (
     <>
@@ -81,32 +81,34 @@ const Alerts = () => {
         >
           <Frame extra={`align-items: flex-start;`}>
             {item.message.split(`\\n`).map((item, index) => {
-              return <span key={index}>{item}</span>;
+              return <span key={index}>{item}</span>
             })}
           </Frame>
           <Cros
             onClick={() => {
-              closeItem(item.id);
+              closeItem(item.id)
             }}
           />
         </Bar>
       ))}
     </>
-  );
-};
+  )
+}
 
 const Cros = styled(Frame)`
   width: 18px;
   height: 18px;
   margin-left: 9px;
   cursor: pointer;
-`;
+`
 
-const Bar = styled(Frame)<{
-  visible?: boolean;
-  index: number;
-  status?: string;
-}>`
+// <{
+//   visible?: boolean;
+//   index: number;
+//   status?: string;
+// }>
+
+const Bar = styled(Frame)`
   padding: 15px;
   box-sizing: border-box;
   flex-direction: row;
@@ -142,7 +144,7 @@ const Bar = styled(Frame)<{
     height: 43px;
     margin-right: 9px;
   }
-`;
+`
 
-export default Alerts;
+export default Alerts
 /*eslint-enable*/
