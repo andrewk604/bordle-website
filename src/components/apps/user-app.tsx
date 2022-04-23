@@ -19,7 +19,7 @@ let UserApp = (props: any) => {
 }
 
 const Wrapper = styled(Frame)`
-  height: 100vh;
+  /* height: 100vh; */
   padding: 0;
   margin: 0;
 `

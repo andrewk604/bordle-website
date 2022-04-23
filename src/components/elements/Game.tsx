@@ -122,6 +122,9 @@ let Game = (props: any) => {
   }
 
   const keyboardType = (e: any) => {
+    if (e.getModifierState("CapsLock")) {
+      AlertsService.showError("Turn CapsLock off to play")
+    }
     if (
       e.key >= "a" &&
       e.key <= "z" &&
@@ -292,11 +295,13 @@ const GameWrapper = styled(Frame)`
 
 const Grid = styled(Frame)`
   margin-right: 5px;
+  width: 80%;
 `
 
 const Keyboard = styled(Frame)`
   margin-top: 16px;
   margin-right: 6px;
+  width: 100%;
 `
 
 const Key = styled(Frame)`
