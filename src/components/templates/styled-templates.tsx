@@ -1,6 +1,7 @@
-import React from "react";
-import styled, { keyframes, css } from "styled-components";
-import { Link } from "react-router-dom";
+/* eslint-disable */
+import React from "react"
+import styled, { keyframes, css } from "styled-components"
+import { Link } from "react-router-dom"
 
 const jump = keyframes`
   from{
@@ -9,7 +10,25 @@ const jump = keyframes`
   to{
     transform: translateY(-2px)
   }
-`;
+`
+
+export const shake = keyframes`
+  10%, 90% {
+    transform: translateX(-1px);
+  }
+  
+  20%, 80% {
+    transform: translateX(2px);
+  }
+
+  30%, 50%, 70% {
+    transform: translateX(-4px);
+  }
+
+  40%, 60% {
+    transform: translateX(4px);
+  }
+`
 
 export const Frame = styled.div.attrs((props) => ({
   ...props
@@ -24,7 +43,7 @@ export const Frame = styled.div.attrs((props) => ({
     font-size: 4vw;
   }
   ${(props) => props.extra}
-`;
+`
 
 export const Button = styled(Frame)`
   box-sizing: border-box;
@@ -42,7 +61,7 @@ export const Button = styled(Frame)`
     animation: ${jump} 0.3s ease-out forwards;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
-`;
+`
 
 export const Workspace = styled(Frame)`
   width: 85vw;
@@ -51,7 +70,7 @@ export const Workspace = styled(Frame)`
   flex-direction: column;
   align-items: center;
   ${(props) => props.extra}
-`;
+`
 
 export const Input = styled.input.attrs((props) => ({
   ...props
@@ -70,7 +89,7 @@ export const Input = styled.input.attrs((props) => ({
   :hover {
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
-`;
+`
 
 export const Form = styled.form.attrs((props) => ({
   ...props
@@ -80,18 +99,18 @@ export const Form = styled.form.attrs((props) => ({
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-`;
+`
 
 export const H1 = styled(Frame)`
   font-weight: 700;
   font-size: 3rem;
-`;
+`
 
 export const Text = styled(Frame)`
   font-weight: normal;
   font-size: 18px;
   letter-spacing: 1px;
-`;
+`
 
 export const StyledLink = styled(Link).attrs((props) => ({
   ...props
@@ -99,4 +118,4 @@ export const StyledLink = styled(Link).attrs((props) => ({
   text-decoration: none;
   color: black;
   ${({ extra }) => extra}
-`;
+`

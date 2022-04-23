@@ -2,17 +2,28 @@
 import React, { useState, useEffect, useCallback } from "react"
 import styled from "styled-components"
 
-import { Frame, Workspace } from "../templates/styled-templates"
+import { Frame, Workspace, shake } from "../templates/styled-templates"
 import Header from "../templates/header"
 
 import { eventDispatch } from "../../hooks/useEvents"
+import { putStorage, getStorage } from "../../hooks/useStorage"
+
+import AlertsService from "../../services/alert-service"
+
+import UserApi from "../../api/user-api"
 
 let Game = (props: any) => {
+  let lastGridItems = null
+
   useEffect(() => {
     window.addEventListener(`keydown`, keyboardType)
     return () => {
       window.removeEventListener(`keydown`, keyboardType)
     }
+  }, [])
+
+  useEffect(() => {
+    lastGridItems = getStorage(`last_grid`) || gridItemsProto
   }, [])
 
   let currentRow = 0
@@ -41,8 +52,30 @@ let Game = (props: any) => {
     }
   }
 
-  const Enter = (key: string) => {
+  const Enter = async (key: string) => {
     if (currentSquare == 4 && currentRow < 5) {
+      const result = await UserApi.checkWord(word)
+      console.log(result)
+      if (result == undefined) {
+        AlertsService.showError(`Not in the word list`)
+
+        return
+      }
+      const newGridItems = [...gridItemsProto]
+      const newKeyboard = [...keyboardProto]
+
+      result.correctSymbols.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 2
+      })
+      result.correctPlaces.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 1
+      })
+      result.notCorrect.forEach((i, id) => {
+        newGridItems[currentRow][i].state = 3
+      })
+
+      setGridItems(newGridItems)
+
       currentRow += 1
       currentSquare = -1
     }
@@ -61,7 +94,6 @@ let Game = (props: any) => {
   }
 
   const keyboardType = (e: any) => {
-    console.log(currentSquare)
     if (e.key >= "a" && e.key <= "z" && loading === false) {
       newSymbol(e.key)
     }
@@ -73,56 +105,100 @@ let Game = (props: any) => {
     if (e.key === "Enter" && loading === false) {
       Enter(e.key)
     }
-    console.log(currentSquare)
+    word = ""
+    gridItems[currentRow].forEach((i) => {
+      word += i.value
+    })
   }
 
   const gridItemsProto = [
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }],
-    [{ value: "" }, { value: "" }, { value: "" }, { value: "" }, { value: "" }]
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ],
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ],
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ],
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ],
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ],
+    [
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 },
+      { value: "", state: 0 }
+    ]
   ]
 
-  const keyboard = [
+  // States: default = 0; correct = 1; in word = 2; not in word = 3
+
+  const keyboardProto = [
     [
-      { value: "q", key: "q" },
-      { value: "w", key: "w" },
-      { value: "e", key: "e" },
-      { value: "r", key: "r" },
-      { value: "t", key: "t" },
-      { value: "y", key: "y" },
-      { value: "u", key: "u" },
-      { value: "i", key: "i" },
-      { value: "o", key: "o" },
-      { value: "p", key: "p" }
+      { value: "q", key: "q", state: 0 },
+      { value: "w", key: "w", state: 0 },
+      { value: "e", key: "e", state: 0 },
+      { value: "r", key: "r", state: 0 },
+      { value: "t", key: "t", state: 0 },
+      { value: "y", key: "y", state: 0 },
+      { value: "u", key: "u", state: 0 },
+      { value: "i", key: "i", state: 0 },
+      { value: "o", key: "o", state: 0 },
+      { value: "p", key: "p", state: 0 }
     ],
     [
-      { value: "a", key: "a" },
-      { value: "s", key: "s" },
-      { value: "d", key: "d" },
-      { value: "f", key: "f" },
-      { value: "g", key: "g" },
-      { value: "h", key: "h" },
-      { value: "j", key: "j" },
-      { value: "k", key: "k" },
-      { value: "l", key: "l" }
+      { value: "a", key: "a", state: 0 },
+      { value: "s", key: "s", state: 0 },
+      { value: "d", key: "d", state: 0 },
+      { value: "f", key: "f", state: 0 },
+      { value: "g", key: "g", state: 0 },
+      { value: "h", key: "h", state: 0 },
+      { value: "j", key: "j", state: 0 },
+      { value: "k", key: "k", state: 0 },
+      { value: "l", key: "l", state: 0 }
     ],
     [
-      { value: "enter", key: "Enter" },
-      { value: "z", key: "z" },
-      { value: "x", key: "x" },
-      { value: "c", key: "c" },
-      { value: "v", key: "v" },
-      { value: "b", key: "b" },
-      { value: "n", key: "n" },
-      { value: "m", key: "m" },
-      { value: "Del", key: "Backspace" }
+      { value: "enter", key: "Enter", state: 0 },
+      { value: "z", key: "z", state: 0 },
+      { value: "x", key: "x", state: 0 },
+      { value: "c", key: "c", state: 0 },
+      { value: "v", key: "v", state: 0 },
+      { value: "b", key: "b", state: 0 },
+      { value: "n", key: "n", state: 0 },
+      { value: "m", key: "m", state: 0 },
+      { value: "Del", key: "Backspace", state: 0 }
     ]
   ]
 
   const [gridItems, setGridItems] = useState(gridItemsProto)
+  const [keyboard, setKeyboard] = useState(keyboardProto)
+
+  let word = ""
 
   return (
     <GameWrapper>
@@ -131,7 +207,11 @@ let Game = (props: any) => {
           return (
             <GridRow row key={index}>
               {item.map((subItem, subIndex) => {
-                return <GridElement key={subIndex}>{subItem.value}</GridElement>
+                return (
+                  <GridElement status={subItem.state} key={subIndex}>
+                    {subItem.value}
+                  </GridElement>
+                )
               })}
             </GridRow>
           )
@@ -150,6 +230,7 @@ let Game = (props: any) => {
                         ? `width: 65px;`
                         : `width: 43px;`
                     }
+                    status={subItem.state}
                     onClick={() => {
                       window.dispatchEvent(
                         new KeyboardEvent("keydown", { key: subItem.key })
@@ -173,6 +254,7 @@ const GameWrapper = styled(Frame)`
   height: 100%;
   margin-top: 30px;
   margin-bottom: 10px;
+  justify-content: space-around;
 `
 
 const Grid = styled(Frame)`
@@ -188,7 +270,20 @@ const Key = styled(Frame)`
   height: 58px;
   border-radius: 4px;
   margin-left: 6px;
-  background: #818384;
+  background: ${(props) => {
+    if (props.status == 0) {
+      return "#818384"
+    }
+    if (props.status == 1) {
+      return "#6aaa64"
+    }
+    if (props.status == 2) {
+      return "#c9b458"
+    }
+    if (props.status == 3) {
+      return "#28292b"
+    }
+  }};
   color: #fff;
   font-weight: 600;
   font-size: 16px;
@@ -199,12 +294,14 @@ const Key = styled(Frame)`
 
 const KeyboardRow = styled(Frame)`
   margin-top: 6px;
+  width: 100%;
 `
 
 const GridElement = styled(Frame)`
+  box-sizing: border-box;
   width: 55px;
   height: 55px;
-  border: 2px solid #3a3a3c;
+  border: ${(props) => (props.status == 0 ? `2px solid #3a3a3c` : "")};
   font-size: 2rem;
   line-height: 2rem;
   color: #fff;
@@ -212,6 +309,20 @@ const GridElement = styled(Frame)`
   margin: 0 5px 5px 0;
   text-transform: uppercase;
   user-select: none;
+  background: ${(props) => {
+    if (props.status == 0) {
+      return ""
+    }
+    if (props.status == 1) {
+      return "#6aaa64"
+    }
+    if (props.status == 2) {
+      return "#c9b458"
+    }
+    if (props.status == 3) {
+      return "#28292b"
+    }
+  }};
 `
 
 const GridRow = styled(Frame)`
