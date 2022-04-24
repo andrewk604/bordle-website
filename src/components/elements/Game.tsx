@@ -7,6 +7,7 @@ import Header from "../templates/header"
 
 import { eventDispatch } from "../../hooks/useEvents"
 import { putStorage, getStorage } from "../../hooks/useStorage"
+import useEventListener from "../../hooks/useEventListener"
 
 import AlertsService from "../../services/alert-service"
 
@@ -16,6 +17,7 @@ let Game = (props: any) => {
   let lastGridItems = null
   let loading = false
   let finished = false
+  let isPopUp = false
 
   useEffect(() => {
     window.addEventListener(`keydown`, keyboardType)
@@ -27,6 +29,15 @@ let Game = (props: any) => {
   useEffect(() => {
     lastGridItems = getStorage(`last_grid`) || gridItemsProto
   }, [])
+
+  useEventListener(`OPEN_POP_UP`, () => {
+    isPopUp = true
+    console.log(isPopUp)
+  })
+  useEventListener(`CLOSE_POP_UP`, () => {
+    isPopUp = false
+    console.log(isPopUp)
+  })
 
   let currentRow = 0
   let currentSquare = -1
@@ -61,6 +72,7 @@ let Game = (props: any) => {
 
   const Enter = async (key: string) => {
     if (currentSquare == 4 && currentRow < 5) {
+      loading = true
       const result = await UserApi.checkWord(word)
 
       if (result == undefined) {
@@ -74,16 +86,36 @@ let Game = (props: any) => {
         newGridItems[currentRow][i].state = 2
         let correctSymbol = word.split("")[i]
         newKeyboard.forEach((subItem, subIndex) => {
-          // if (subItem.indexOf(correctSymbol) !== -1) {
-          //   newKeyboard[subIndex][subItem.indexOf(correctSymbol)].state = 2
-          // }
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 2
+            }
+          }
         })
       })
+
       result.correctPlaces.forEach((i, id) => {
         newGridItems[currentRow][i].state = 1
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 1
+            }
+          }
+        })
       })
+
       result.notCorrect.forEach((i, id) => {
         newGridItems[currentRow][i].state = 3
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 3
+            }
+          }
+        })
       })
 
       setGridItems(newGridItems)
@@ -96,22 +128,47 @@ let Game = (props: any) => {
         currentRow += 1
         currentSquare = -1
       }
+      loading = false
     }
 
     if (currentSquare == 4 && currentRow == 5) {
       const result = await UserApi.checkWord(word)
-      console.log(result)
       let newGridItems = [...gridItemsProto]
       let newKeyboard = [...keyboardProto]
 
       result.correctSymbols.forEach((i, id) => {
         newGridItems[currentRow][i].state = 2
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 2
+            }
+          }
+        })
       })
       result.correctPlaces.forEach((i, id) => {
         newGridItems[currentRow][i].state = 1
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 1
+            }
+          }
+        })
       })
+
       result.notCorrect.forEach((i, id) => {
         newGridItems[currentRow][i].state = 3
+        let correctSymbol = word.split("")[i]
+        newKeyboard.forEach((subItem, subIndex) => {
+          for (let item in subItem) {
+            if (subItem[item].value == correctSymbol) {
+              subItem[item].state = 3
+            }
+          }
+        })
       })
       if ((result.correct = true)) {
         congratulations()
@@ -122,9 +179,13 @@ let Game = (props: any) => {
   }
 
   const keyboardType = (e: any) => {
+    console.log(isPopUp)
+    if (isPopUp === true) return
     if (e.getModifierState("CapsLock")) {
       AlertsService.showError("Turn CapsLock off to play")
+      return
     }
+
     if (
       e.key >= "a" &&
       e.key <= "z" &&

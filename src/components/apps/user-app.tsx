@@ -3,13 +3,21 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 
-import { Frame, Workspace } from "../templates/styled-templates"
+import { Frame, Workspace, Button } from "../templates/styled-templates"
 import Header from "../templates/header"
 import Game from "../elements/Game"
+
+import RulesPopUp from "../pop-ups/rules-pop-up"
+import SettingsPopUp from "../pop-ups/settings-pop-up"
+
+import useEventListener, { eventDispatch } from "../../hooks/useEventListener"
 
 let UserApp = (props: any) => {
   return (
     <Wrapper>
+      <RulesPopUp />
+      <SettingsPopUp />
+
       <Header />
       <Workspace>
         <Game />

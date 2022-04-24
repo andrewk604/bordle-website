@@ -106,7 +106,7 @@ export const H1 = styled(Frame)`
   font-size: 3rem;
 `
 
-export const Text = styled(Frame)`
+export const P = styled(Frame)`
   font-weight: normal;
   font-size: 18px;
   letter-spacing: 1px;
@@ -118,4 +118,11 @@ export const StyledLink = styled(Link).attrs((props) => ({
   text-decoration: none;
   color: black;
   ${({ extra }) => extra}
+`
+export const Text = styled.p.attrs((props) => ({
+  ...props
+}))`
+  color: #fff;
+  display: inline;
+  ${(props) => props.extra}
 `
