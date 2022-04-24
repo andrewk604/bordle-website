@@ -5,9 +5,8 @@ import styled from "styled-components"
 import { Frame, Workspace, shake } from "../templates/styled-templates"
 import Header from "../templates/header"
 
-import { eventDispatch } from "../../hooks/useEvents"
 import { putStorage, getStorage } from "../../hooks/useStorage"
-import useEventListener from "../../hooks/useEventListener"
+import useEventListener, { eventDispatch } from "../../hooks/useEventListener"
 
 import AlertsService from "../../services/alert-service"
 
@@ -75,6 +74,7 @@ let Game = (props: any) => {
 
       if (result == undefined) {
         AlertsService.showError(`Not in the word list`)
+        loading = false
         return
       }
       const newGridItems = [...gridItemsProto]
@@ -120,7 +120,9 @@ let Game = (props: any) => {
       setKeyboard(newKeyboard)
 
       if (result.correct === true) {
-        congratulations()
+        putStorage(`result`, result.correct)
+        putStorage(`try`, currentRow)
+        eventDispatch(`OPEN_RESULT_POP_UP`)
         return
       } else if (result.correct === false) {
         currentRow += 1
@@ -169,7 +171,11 @@ let Game = (props: any) => {
         })
       })
       if ((result.correct = true)) {
-        congratulations()
+        const todayWord = await UserApi.getTodayWord()
+        putStorage(`result`, result.result)
+        putStorage(`try`, 5)
+        putStorage(`word`, todayWord)
+        eventDispatch(`OPEN_RESULT_POP_UP`)
       }
       setGridItems(newGridItems)
       setKeyboard(newKeyboard)
@@ -345,10 +351,10 @@ let Game = (props: any) => {
 
 const GameWrapper = styled(Frame)`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   margin-top: 30px;
   margin-bottom: 10px;
-  justify-content: space-around;
+  justify-content: space-evenly;
 `
 
 const Grid = styled(Frame)`

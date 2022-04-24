@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { Frame } from "../templates/styled-templates"
 
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener"
+import useOnClickOutside from "../../hooks/useOnClickOutside"
 
 let PopUpWrapper = (props: any) => {
   let {
@@ -16,9 +17,9 @@ let PopUpWrapper = (props: any) => {
 
   let [visible, setVisible] = useState(false)
   let [shouldRender, setShouldRender] = useState(visible)
+  let ref = useRef()
 
   useEventListener(`OPEN_${name}_POP_UP`, () => {
-    console.log(name)
     setShouldRender(true)
     setVisible(true)
   })
@@ -37,14 +38,15 @@ let PopUpWrapper = (props: any) => {
       : `scroll`
   }, [visible])
 
-  let onClose = () => {
+  const onClose = () => {
     eventDispatch(`CLOSE_${name}_POP_UP`)
     eventDispatch(`CLOSE_POP_UP`)
   }
+  useOnClickOutside(ref, onClose)
 
   return (
     <>
-      <OpenProjectTab visible={visible} extra={extra}>
+      <OpenProjectTab visible={visible} extra={extra} ref={ref}>
         {withCross ? <Cross onClick={onClose} /> : null}
         {props.children}
       </OpenProjectTab>
@@ -78,8 +80,8 @@ const OpenProjectTab = styled(Frame)`
   justify-content: flex-start;
   min-width: 350px;
   /* height: auto; */
-  height: 100%;
-  width: 100%;
+  /* height: 100%; */
+  /* width: 100%; */
   padding: 30px 30px;
   padding: 30px 50px;
   background: #121213;

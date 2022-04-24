@@ -13,6 +13,16 @@ const UserApi = {
     } catch (error) {
       console.log(error)
     }
+  },
+  async getTodayWord() {
+    try {
+      const result = (await axios.get(`${API_ENDPOINT.API_ENDPOINT}/todayword`))
+        .data
+      return result
+    } catch (error) {
+      console.log(error)
+      return error
+    }
   }
 }
 

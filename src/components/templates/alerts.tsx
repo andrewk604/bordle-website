@@ -8,24 +8,26 @@ import { EAlertTypes } from "../../services/alert-service"
 
 import useEventListener, { eventDispatch } from "../../hooks/useEventListener"
 
-// type TNotification = {
-//   id: string
-//   message: string
-//   visible: boolean
-//   status: string
-// }
+type TNotification = {
+  id: string
+  message: string
+  visible: boolean
+  status: string
+}
 
-// type TNotificationRef = {
-//   current: TNotification[]
-// }
+type TNotificationRef = {
+  current: TNotification[]
+}
 
 const createId = () => Math.random().toString(36).substring(3)
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const Alerts = () => {
-  const notificationsRef = useRef([])
-  const [notifications, setNotifications] = useState(notificationsRef.current)
+  const notificationsRef: TNotificationRef = useRef([])
+  const [notifications, setNotifications] = useState<Array<TNotification>>(
+    notificationsRef.current
+  )
 
   useEffect(() => {
     notificationsRef.current = notifications

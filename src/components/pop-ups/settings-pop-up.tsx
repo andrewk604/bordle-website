@@ -14,7 +14,7 @@ let SettingsPopUp = (props: any) => {
   useEventListener(`OPEN_${popUpName}_POP_UP`, (d) => {})
 
   return (
-    <PopUpWrapper name={popUpName} extra={``}>
+    <PopUpWrapper name={popUpName} extra={`height: 100%; width: 100%;`}>
       <Title>SETTINGS</Title>
       <Frame
         row
