@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import React, { useState, useEffect, useCallback } from "react"
 import styled from "styled-components"
 

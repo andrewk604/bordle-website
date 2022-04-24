@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import React from "react"
 import styled, { keyframes, css } from "styled-components"
 import { Link } from "react-router-dom"

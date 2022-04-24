@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 
@@ -20,6 +21,7 @@ let PopUpWrapper = (props: any) => {
   let ref = useRef()
 
   useEventListener(`OPEN_${name}_POP_UP`, () => {
+    console.log(name)
     setShouldRender(true)
     setVisible(true)
   })
