@@ -214,14 +214,14 @@ let Game = (props: any) => {
           }
         })
       })
-      if (result.correct === true) {
+      // if (result.correct === true) {
         const todayWord = await UserApi.getTodayWord()
         putStorage(`result`, result.correct)
         putStorage(`try`, 5)
         putStorage(`word`, todayWord)
         finished = true
         eventDispatch(`OPEN_RESULT_POP_UP`)
-      }
+      // }
       setGridItems(newGridItems)
       setKeyboard(newKeyboard)
     }
