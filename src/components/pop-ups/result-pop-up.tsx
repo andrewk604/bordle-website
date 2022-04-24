@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+
 import React, { useState, useEffect, useMemo, useCallback } from "react"
 import styled from "styled-components"
 import { useLocation } from "react-router-dom"
@@ -19,6 +20,7 @@ let ResultPopUp = (props: any) => {
 
   useEventListener(`OPEN_${popUpName}_POP_UP`, (d) => {
     const newResult = getStorage(`result`)
+    console.log(getStorage(`word`))
     const dayWord = getStorage(`word`).split("").slice(1, 6).join("")
     setResult(newResult)
     setTryNumber((Number(getStorage(`try`)) + 1).toString())

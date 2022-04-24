@@ -1,9 +1,10 @@
 /* eslint-disable */
 // @ts-nocheck
+
 import React, { useState, useEffect } from "react"
 import { eventDispatch } from "./useEvents"
 
-export let putStorage = (path: any, value: any) => {
+export let putStorage = (path: string, value: any) => {
   localStorage.setItem(
     path,
     path == `auth_token` ? value : JSON.stringify(value)
