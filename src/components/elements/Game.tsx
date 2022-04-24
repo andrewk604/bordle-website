@@ -32,11 +32,9 @@ let Game = (props: any) => {
 
   useEventListener(`OPEN_POP_UP`, () => {
     isPopUp = true
-    console.log(isPopUp)
   })
   useEventListener(`CLOSE_POP_UP`, () => {
     isPopUp = false
-    console.log(isPopUp)
   })
 
   let currentRow = 0
@@ -179,7 +177,6 @@ let Game = (props: any) => {
   }
 
   const keyboardType = (e: any) => {
-    console.log(isPopUp)
     if (isPopUp === true) return
     if (e.getModifierState("CapsLock")) {
       AlertsService.showError("Turn CapsLock off to play")
